@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Build the Docker image
-        run: docker build -t node-imagemagick .
+        run: docker build -t goof .
 
       - name: Analyze Docker image with Snyk
         continue-on-error: true
@@ -19,8 +19,8 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: node-imagemagick
-          args: --sarif-file-output=snyk.sarif
+          image: goof
+          args: --file=Dockerfile --severity-threshold=high
   
       - name: Upload Snyk results to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
