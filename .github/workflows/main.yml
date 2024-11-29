@@ -7,22 +7,22 @@ jobs:
       contents: read
       security-events: write
     steps:
-    - name: Checkout code
-      uses: actions/checkout@master
+      - name: Checkout code
+        uses: actions/checkout@master
 
-    - name: Build the Docker image
-      run: docker build -t node-imagemagick .
+      - name: Build the Docker image
+        run: docker build -t node-imagemagick .
 
-    - name: Analyze Docker image with Snyk
-      continue-on-error: true
-      uses: snyk/actions/docker@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        image: node-imagemagick
-        args: --file=Dockerfile --sarif-file-output=snyk.sarif
-
-    - name: Upload Snyk results to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: snyk.sarif
+      - name: Analyze Docker image with Snyk
+        continue-on-error: true
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: node-imagemagick
+          args: --file=Dockerfile --sarif-file-output=snyk.sarif
+  
+      - name: Upload Snyk results to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
