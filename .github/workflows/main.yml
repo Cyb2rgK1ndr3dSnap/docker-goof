@@ -5,27 +5,24 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write # Necesario para subir resultados SARIF
+      security-events: write
     steps:
     - name: Checkout code
       uses: actions/checkout@master
 
     - name: Build the Docker image
-      # Construir la imagen Docker con el nombre "node-imagemagick"
       run: docker build -t node-imagemagick .
 
     - name: Analyze Docker image with Snyk
-      # Continuar si hay vulnerabilidades para subir el resultado
       continue-on-error: true
       uses: snyk/actions/docker@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        image: node-imagemagick # Debe coincidir con el nombre de la imagen creada
-        args: --file=Dockerfile # Indicar el archivo Dockerfile específico
+        image: node-imagemagick
+        args: --file=Dockerfile --sarif-file-output=snyk.sarif
 
     - name: Upload Snyk results to GitHub Code Scanning
-      # Subir resultados del análisis en formato SARIF a GitHub Code Scanning
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: snyk.sarif
